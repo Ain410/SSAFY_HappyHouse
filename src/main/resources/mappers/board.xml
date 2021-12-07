@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.vue.model.mapper.BoardMapper">
+
+	<insert id="writeArticle" parameterType="boardDto">
+		INSERT INTO BOARD (USERID, SUBJECT, CONTENT, HIT, REGTIME)
+		VALUES (#{userid}, #{subject}, #{content}, 0, now())
+	</insert>
+
+	
+	<select id="listArticle" parameterType="map" resultType="boardDto">
+		SELECT ARTICLENO, USERID, SUBJECT, CONTENT, HIT,
+			case when date_format(regtime, '%Y%m%d') = date_format(now(), '%Y%m%d')
+			then date_format(regtime, '%H:%i:%s')
+			else date_format(regtime, '%y.%m.%d')
+			end regtime
+		FROM BOARD
+		<if test="word != null and word != ''">
+			<if test="key == 'subject'">
+				where subject like concat('%', #{word}, '%')
+			</if>
+			<if test="key != 'subject'">
+				where ${key} = #{word}
+			</if>
+		</if>
+		ORDER BY ARTICLENO DESC
+		LIMIT #{start}, #{spp}
+
+	</select>
+	
+	<select id="getTotalCount" parameterType="map" resultType="int">
+		SELECT COUNT(articleno)
+		FROM BOARD
+		<if test="word != null and word != ''">
+			<if test="key == 'subject'">
+				where subject like concat('%', #{word}, '%')
+			</if>
+			<if test="key != 'subject'">
+				where ${key} = #{word}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getArticle" parameterType="int" resultType="boardDto">
+		SELECT ARTICLENO, USERID, SUBJECT, CONTENT, HIT, REGTIME
+		FROM BOARD
+		WHERE ARTICLENO = #{articleno}
+	</select>
+	
+	<update id="updateHit" parameterType="int">
+		UPDATE BOARD
+		SET hit = hit + 1
+		where articleno = #{articleno}
+	</update>
+	
+	<update id="modifyArticle" parameterType="boardDto">
+		UPDATE BOARD
+		SET SUBJECT = #{subject}, CONTENT = #{content}
+		WHERE ARTICLENO = #{articleno}
+	</update>
+	
+	<delete id="deleteArticle" parameterType="int">
+		DELETE FROM BOARD
+		WHERE ARTICLENO = #{articleno}
+	</delete>
+</mapper>

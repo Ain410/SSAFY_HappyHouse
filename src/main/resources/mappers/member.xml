@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.vue.model.mapper.MemberMapper">
+	<select id="login" parameterType="memberDto" resultType="memberDto">
+		select username, userid, email
+		from ssafy_member
+		where userid = #{userid} and userpwd = #{userpwd}
+	</select>
+	
+	<select id="userInfo" parameterType="String" resultType="memberDto">
+		SELECT USERNAME, USERID, EMAIL, JOINDATE
+		FROM SSAFY_MEMBER
+		WHERE USERID = #{userid}
+	</select>
+	
+	<insert id="registMember" parameterType="memberDto">
+		INSERT INTO SSAFY_MEMBER (USERID, USERNAME, USERPWD, EMAIL)
+		VALUES (#{userid}, #{username}, #{userpwd}, #{email})
+	</insert>
+	
+	<update id="updateMember" parameterType="memberDto">
+		UPDATE SSAFY_MEMBER 
+		SET USERNAME=#{username}, USERPWD=#{userpwd}, EMAIL=#{email}
+		WHERE USERID = #{userid}
+	</update>
+	
+	<delete id="deleteMember" parameterType="memberDto">
+		DELETE
+		FROM SSAFY_MEMBER
+		WHERE USERID=#{userid}
+	</delete>
+</mapper>
